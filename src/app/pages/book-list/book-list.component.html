@@ -1,0 +1,48 @@
+<div class="flex flex-row justify-between items-center px-4">
+    <mat-form-field class="w-1/2">
+        <mat-icon matPrefix fontIcon="search"></mat-icon>
+        <mat-label>Search</mat-label>
+        <input matInput [formControl]="searchCtrl" placeholder="Title, author or genre">
+    </mat-form-field>
+    <div class="inline-flex flex-row items-center gap-4">
+        <button mat-stroked-button (click)="openBook()" color="primary">
+            <mat-icon fontIcon="add" color="accent"></mat-icon>
+            Add Book
+        </button>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon fontIcon="filter_alt"></mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button *ngFor="let col of cols" mat-menu-item>
+                <mat-checkbox
+                    (click)="$event.stopPropagation()" [checked]="col.show"
+                    (change)="toggleCol(col)">{{col.label}}</mat-checkbox>
+            </button>
+        </mat-menu>
+    </div>
+</div>
+<div class="flex grow relative overflow-hidden">
+    <div class="h-full max-h-full overflow-y-auto absolute block w-full ">
+        <table mat-table [dataSource]="dataSource" matSort>
+            <caption class="hidden">Books</caption>
+            <ng-container *ngFor="let col of cols" [matColumnDef]="col.property">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{col.label}} </th>
+                <td mat-cell *matCellDef="let book"> {{book[col.property]}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="colsDef; sticky: true"></tr>
+            <tr mat-row *matRowDef="let book; columns: colsDef;" (click)="openBook(book.id)"></tr>
+
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell h-full" [attr.colspan]="colsDef.length">
+                    <div class="flex flex-col py-12">
+                        <mat-icon class="self-center scale-150 mb-6" color="accent" fontIcon="search_off"></mat-icon>
+                        <h1 class="text-center text-lg">
+                            No data matching the filter "{{lastSearch}}"
+                        </h1>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>

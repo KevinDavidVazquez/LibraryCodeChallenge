@@ -12,58 +12,10 @@
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 
-$primary-palette: (
- 50: #fffee6,
- 100: #fffac0,
- 200: #fef695,
- 300: #fcf267,
- 400: #f9ee3e,
- 500: #f6e900,
- 600: #ffdd00,
- 700: #ffc400,
- 800: #ffc400,
- 900: #ff7e00,
- contrast: (
-   50: black,
-   100: black,
-   200: black,
-   300: black,
-   400: black,
-   500: black,
-   600: black,
-   700: black,
-   800: black,
-   900: white,
- )
-);
-
-$secondary-palette: (
- 50: #d5f4f4,
- 100: #91e3e1,
- 200: #00d1ce,
- 300: #00bcb6,
- 400: #00aba3,
- 500: #009a8f,
- 600: #008d81,
- 700: #007d70,
- 800: #006d60,
- 900: #005040,
- contrast: (
-   50: black,
-   100: black,
-   200: black,
-   300: black,
-   400: black,
-   500: black,
-   600: black,
-   700: black,
-   800: white,
-   900: white,
- )
-);
-$LibraryCodeChallenge-primary: mat.define-palette($primary-palette, 600);
-$LibraryCodeChallenge-accent: mat.define-palette($secondary-palette, 200);
-
+$LibraryCodeChallenge-primary: mat.define-palette(mat.$indigo-palette, 500);
+$LibraryCodeChallenge-accent: mat.define-palette(mat.$yellow-palette, 500);
+// The "warn" palette is optional and defaults to red if not specified.
+$my-warn: mat.define-palette(mat.$red-palette);
 // The warn palette is optional (defaults to red).
 $LibraryCodeChallenge-warn: mat.define-palette(mat.$red-palette);
 

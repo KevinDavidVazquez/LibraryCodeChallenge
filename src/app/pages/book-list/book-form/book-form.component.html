@@ -1,0 +1,49 @@
+<div mat-dialog-title>
+    <div class="flex flex-row justify-between">
+        <div class=" block font-semibold text-xl text-primary" ngC>
+            {{bookForm.value.id ? 'Edit': 'Create New'}} Book 
+        </div>
+        <button mat-icon-button mat-dialog-close (click)="close()" class="block">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+</div>
+<form [formGroup]="bookForm" class="flex flex-grow flex-col">
+    <mat-dialog-content class="flex flex-grow flex-col px-5 pt-0 pb-4">
+        <mat-form-field class="w-full mb-5">
+            <mat-label>Title</mat-label>
+            <input formControlName="title" matInput placeholder="Book name">
+            <mat-error *ngIf="bookForm.title.errors">Required field</mat-error>
+        </mat-form-field>
+        <mat-form-field class="w-full mb-5">
+            <mat-label>Author</mat-label>
+            <input formControlName="author" matInput placeholder="Author name">
+            <mat-error *ngIf="bookForm.author.errors">Required field</mat-error>
+        </mat-form-field>
+        <mat-form-field class="w-full mb-5">
+            <mat-label>ISBN</mat-label>
+            <input formControlName="isbn" matInput placeholder="International Standard Book Number">
+            <mat-error *ngIf="bookForm.isbn.errors && bookForm.isbn.errors['required']">Required field</mat-error>
+            <mat-error *ngIf="bookForm.isbn.errors && bookForm.isbn.errors['pattern']">Not a valid ISBN</mat-error>
+        </mat-form-field>
+        <div class="flex flex-row gap-4">
+            <mat-form-field class="flex flex-grow mb-5">
+                <mat-label>Genres</mat-label>
+                <mat-select formControlName="genre" multiple>
+                    <mat-option *ngFor="let genre of genres" [value]="genre">{{genre}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="bookForm.genre.errors">Required field</mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex flex-grow mb-5">
+                <mat-label>Stock</mat-label>
+                <input type="number" formControlName="stock" matInput placeholder="Book name">
+                <mat-error *ngIf="bookForm.stock.errors">Required field</mat-error>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+        <button type="button" mat-stroked-button color="primary" mat-dialog-close (click)="close()">Cancel</button>
+        <button type="submit" (click)="save()" mat-raised-button color="primary">Save</button>
+    </mat-dialog-actions>
+</form>

@@ -1,0 +1,8 @@
+:host ::ng-deep {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .mdc-dialog__title::before {
+        height: 10px;
+    }
+}

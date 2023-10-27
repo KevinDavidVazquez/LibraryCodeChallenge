@@ -1,7 +1,24 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { ROUTES } from './app/routes';
+import { AppComponent } from './app/app.component';
+import { BookService } from './app/services/book/book.service';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { NgxsModule } from '@ngxs/store';
+import { importProvidersFrom } from '@angular/core';
+import { AppState } from './app/store/app.state';
+import { MatDialogModule } from '@angular/material/dialog';
 
-import { AppModule } from './app/app.module';
 
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideAnimations(), 
+    importProvidersFrom(
+        NgxsModule.forRoot([AppState], {
+            developmentMode: true
+        }),
+        MatDialogModule,
+    ),
+    BookService, 
+    provideRouter(ROUTES)],
+});
