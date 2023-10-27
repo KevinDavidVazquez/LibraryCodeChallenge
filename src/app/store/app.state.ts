@@ -100,7 +100,6 @@ export class AppState {
         });
       }),
       catchError(err => {
-        debugger;
         ctx.patchState({loadingDelete: undefined});
         throw err;
       })
