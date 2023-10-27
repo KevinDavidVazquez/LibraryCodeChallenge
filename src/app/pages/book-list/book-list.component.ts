@@ -73,6 +73,7 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
   dataSource: MatTableDataSource<Book> = new MatTableDataSource([] as Book[]);
   lastSearch = '';
   isLoading = false;
+  deleteLoading? : number;
 
   get colsDef(): string[] {
     return this.cols.reduce((acu: string[], col) => {
@@ -83,6 +84,12 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
 
   constructor(private _store: Store, private _cdr: ChangeDetectorRef, private _dialog: MatDialog, private _route: ActivatedRoute, private _router: Router, private _snackBar: MatSnackBar) {
     this._subscription = combineLatest([
+      this._store.select(state => state.bookState.loadingDelete).pipe(
+        tap(deleteLoading => {
+          this.deleteLoading = deleteLoading;
+          this._cdr.markForCheck();
+        })
+      ),
       this._store.select(state => state.bookState.loadingList).pipe(
         tap(isLoading => this.isLoading = isLoading)
       ),
@@ -144,7 +151,17 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
   }
 
   deleteBook(id: number){
-    this._store.dispatch(new AppActions.DeleteBook(id));
+    this._store.dispatch(new AppActions.DeleteBook(id)).pipe(
+      take(1),
+      catchError(err => {
+        this._snackBar.open(err, 'retry', {
+          duration: 5000
+        }).onAction().pipe(
+          take(1)
+        ).subscribe(_ => this.deleteBook(id));
+        throw err;
+      })
+    ).subscribe();
   }
 
   ngOnDestroy(): void {

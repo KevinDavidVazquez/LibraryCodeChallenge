@@ -98,7 +98,13 @@ export class AppState {
           books,
           loadingDelete: undefined
         });
-      }))
+      }),
+      catchError(err => {
+        debugger;
+        ctx.patchState({loadingDelete: undefined});
+        throw err;
+      })
+    )
   }
 
   @Action(AppActions.UnSelectBook)
