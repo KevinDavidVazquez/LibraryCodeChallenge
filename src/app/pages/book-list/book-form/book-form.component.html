@@ -3,7 +3,7 @@
         <div class=" block font-semibold text-xl text-primary" ngC>
             {{bookForm.value.id ? 'Edit': 'Create New'}} Book 
         </div>
-        <button mat-icon-button mat-dialog-close (click)="close()" class="block">
+        <button mat-icon-button (click)="close()" class="block">
             <mat-icon>close</mat-icon>
         </button>
     </div>
@@ -48,7 +48,7 @@
     </mat-dialog-content>
     <mat-divider></mat-divider>
     <mat-dialog-actions align="end">
-        <button type="button" mat-stroked-button color="primary" mat-dialog-close (click)="close()">Cancel</button>
+        <button type="button" mat-stroked-button color="primary" (click)="close()">Cancel</button>
         <button type="submit" (click)="save()" mat-raised-button color="primary">Save</button>
     </mat-dialog-actions>
 </form>

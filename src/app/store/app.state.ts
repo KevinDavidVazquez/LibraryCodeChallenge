@@ -74,6 +74,12 @@ export class AppState {
           selectedBook: book,
           loadingSelected: false
         });
+      }),
+      catchError(err => {
+        ctx.patchState({
+          loadingSelected: false
+        });
+        throw err;
       })
     );
   }

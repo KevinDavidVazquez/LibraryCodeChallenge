@@ -13,7 +13,10 @@ export class BookService {
   getAll(): Observable<Book[]>{
     return of([...this._books]).pipe(
       delay(1000),
-      // map(_ => {throw('There was an error getting the books.')})
+      map(books => {
+        if(Math.random() < 0.15) throw('There was an error getting the books.');
+        return books; 
+      })
     );
   }
   
@@ -26,6 +29,9 @@ export class BookService {
   }
 
   save(book: Book): Observable<Book>{
+    if(Math.random() < 0.15) return of(book).pipe(delay(1000), map(_ => {
+      throw('There was an error saving the books.')
+    }));
     if(book.id) {
       this._books[this._books.findIndex(_book => _book.id == book.id)] = book;
     } else {
@@ -36,6 +42,9 @@ export class BookService {
   }
 
   delete(id: number){
+    if(Math.random() < 0.15) of(id).pipe(delay(1000), map(_ => {
+      throw('There was an error deleting the book.')
+    }));
     this._books.splice(this._books.findIndex(book => book.id == id), 1);
     return of();
   }

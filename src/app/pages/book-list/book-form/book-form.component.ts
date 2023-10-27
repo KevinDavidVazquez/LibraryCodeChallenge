@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { BookForm } from './book.form';
@@ -57,7 +57,11 @@ export class BookFormComponent implements OnDestroy {
     'Sci-Fi'
   ]
 
-  constructor(@Inject(MAT_DIALOG_DATA) public id: number, private _router: Router, private _store: Store, private _snackBar: MatSnackBar) {
+  constructor(
+    private _dialogRef: MatDialogRef<BookFormComponent>,
+    @Inject(MAT_DIALOG_DATA) public id: number,
+    private _router: Router, private _store: Store, private _snackBar: MatSnackBar
+  ) {
     this._subscription = this._store.select(state => state.bookState.selectedBook).subscribe(book => this.bookForm.patchValue(book));
     this._subscription.add(
       _store.select(state => state.bookState.loadingSelected).subscribe(isLoading => this.isLoading = isLoading)
@@ -81,10 +85,19 @@ export class BookFormComponent implements OnDestroy {
 
   save(){
     if(this.bookForm.invalid) return;
-    this._store.dispatch(new AppActions.SaveBook(this.bookForm.value));
+    this._store.dispatch(new AppActions.SaveBook(this.bookForm.value)).pipe(
+      take(1),
+      catchError(err =>{
+        this._snackBar.open(err, 'X', {
+          duration: 1500
+        })
+        throw err;
+      })
+    ).subscribe(_ => this.close());
   }
 
   close(){
+    this._dialogRef.close();
     this._router.navigate(['../'])
   }
 
