@@ -10,36 +10,41 @@
 </div>
 <form [formGroup]="bookForm" class="flex flex-grow flex-col">
     <mat-dialog-content class="flex flex-grow flex-col px-5 pt-0 pb-4">
-        <mat-form-field class="w-full mb-5">
-            <mat-label>Title</mat-label>
-            <input formControlName="title" matInput placeholder="Book name">
-            <mat-error *ngIf="bookForm.title.errors">Required field</mat-error>
-        </mat-form-field>
-        <mat-form-field class="w-full mb-5">
-            <mat-label>Author</mat-label>
-            <input formControlName="author" matInput placeholder="Author name">
-            <mat-error *ngIf="bookForm.author.errors">Required field</mat-error>
-        </mat-form-field>
-        <mat-form-field class="w-full mb-5">
-            <mat-label>ISBN</mat-label>
-            <input formControlName="isbn" matInput placeholder="International Standard Book Number">
-            <mat-error *ngIf="bookForm.isbn.errors && bookForm.isbn.errors['required']">Required field</mat-error>
-            <mat-error *ngIf="bookForm.isbn.errors && bookForm.isbn.errors['pattern']">Not a valid ISBN</mat-error>
-        </mat-form-field>
-        <div class="flex flex-row gap-4">
-            <mat-form-field class="flex flex-grow mb-5">
-                <mat-label>Genres</mat-label>
-                <mat-select formControlName="genre" multiple>
-                    <mat-option *ngFor="let genre of genres" [value]="genre">{{genre}}</mat-option>
-                </mat-select>
-                <mat-error *ngIf="bookForm.genre.errors">Required field</mat-error>
-            </mat-form-field>
-            <mat-form-field class="flex flex-grow mb-5">
-                <mat-label>Stock</mat-label>
-                <input type="number" formControlName="stock" matInput placeholder="Book name">
-                <mat-error *ngIf="bookForm.stock.errors">Required field</mat-error>
-            </mat-form-field>
+        <div *ngIf="isLoading;else formTemplate" class="flex h-36 justify-center items-center">
+            <mat-spinner color="accent"></mat-spinner>
         </div>
+        <ng-template #formTemplate>
+            <mat-form-field class="w-full mb-5">
+                <mat-label>Title</mat-label>
+                <input formControlName="title" matInput placeholder="Book name">
+                <mat-error *ngIf="bookForm.title.errors">Required field</mat-error>
+            </mat-form-field>
+            <mat-form-field class="w-full mb-5">
+                <mat-label>Author</mat-label>
+                <input formControlName="author" matInput placeholder="Author name">
+                <mat-error *ngIf="bookForm.author.errors">Required field</mat-error>
+            </mat-form-field>
+            <mat-form-field class="w-full mb-5">
+                <mat-label>ISBN</mat-label>
+                <input formControlName="isbn" matInput placeholder="International Standard Book Number">
+                <mat-error *ngIf="bookForm.isbn.errors && bookForm.isbn.errors['required']">Required field</mat-error>
+                <mat-error *ngIf="bookForm.isbn.errors && bookForm.isbn.errors['pattern']">Not a valid ISBN</mat-error>
+            </mat-form-field>
+            <div class="flex flex-row gap-4">
+                <mat-form-field class="flex flex-grow mb-5">
+                    <mat-label>Genres</mat-label>
+                    <mat-select formControlName="genre" multiple>
+                        <mat-option *ngFor="let genre of genres" [value]="genre">{{genre}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="bookForm.genre.errors">Required field</mat-error>
+                </mat-form-field>
+                <mat-form-field class="flex flex-grow mb-5">
+                    <mat-label>Stock</mat-label>
+                    <input type="number" formControlName="stock" matInput placeholder="Book name">
+                    <mat-error *ngIf="bookForm.stock.errors">Required field</mat-error>
+                </mat-form-field>
+            </div>
+        </ng-template>
     </mat-dialog-content>
     <mat-divider></mat-divider>
     <mat-dialog-actions align="end">

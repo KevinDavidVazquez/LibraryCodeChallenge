@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, delay, of } from 'rxjs';
 import { Book } from 'src/app/models/book';
 import { BOOKS_DATA } from 'src/data/book';
 
@@ -11,13 +11,13 @@ export class BookService {
   private _books: Book[] = BOOKS_DATA;
   
   getAll(): Observable<Book[]>{
-    return of([...this._books]);
+    return of([...this._books]).pipe(delay(3000));
   }
   
   get(id: number): Observable<Book>{
     const book = this._books.find(book => book.id == id);
     if(!book) throw new Error(`No book found with id: ${id}`);
-    return of({...book});
+    return of({...book}).pipe(delay(2000));
   }
 
   save(book: Book): Observable<Book>{

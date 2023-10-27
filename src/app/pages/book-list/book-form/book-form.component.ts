@@ -11,9 +11,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { Store } from '@ngxs/store';
-import { Subscription } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subscription } from 'rxjs';
 import { AppActions } from 'src/app/store/actions';
+import { AppStateModel } from 'src/app/store/app.state';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-book-form',
@@ -29,12 +31,15 @@ import { AppActions } from 'src/app/store/actions';
     MatSelectModule,
     MatDividerModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './book-form.component.html',
   styleUrls: ['./book-form.component.scss'],
 })
 export class BookFormComponent implements OnDestroy {
   private _subscription: Subscription;
+
+  isLoading = false;
   bookForm = new BookForm();
   genres = [
     'Drama',
@@ -55,6 +60,9 @@ export class BookFormComponent implements OnDestroy {
 
   constructor(private _router: Router, private _store: Store) {
     this._subscription = this._store.select(state => state.bookState.selectedBook).subscribe(book => this.bookForm.patchValue(book));
+    this._subscription.add(
+      _store.select(state => state.bookState.loadingSelected).subscribe(isLoading => this.isLoading = isLoading)
+    );
   }
 
   save(){

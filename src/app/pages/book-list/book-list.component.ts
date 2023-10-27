@@ -19,6 +19,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
+  Observable,
   Subscription,
   combineLatest,
   debounceTime,
@@ -31,6 +32,7 @@ import { Column } from 'src/app/models/columns';
 import { MatDialog } from '@angular/material/dialog';
 import { BookFormComponent } from './book-form/book-form.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-book-list',
@@ -47,6 +49,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     ReactiveFormsModule,
     MatMenuModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './book-list.component.html',
   styleUrls: ['./book-list.component.scss'],
@@ -62,6 +65,7 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
   searchCtrl = new FormControl('');
   dataSource: MatTableDataSource<Book> = new MatTableDataSource([] as Book[]);
   lastSearch = '';
+  isLoading = false;
 
   get colsDef(): string[] {
     return this.cols.reduce((acu: string[], col) => {
@@ -72,6 +76,13 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
 
   constructor(private _store: Store, private _cdr: ChangeDetectorRef, private _dialog: MatDialog, private _route: ActivatedRoute, private _router: Router) {
     this._subscription = combineLatest([
+      this._store.select(state => state.bookState.loadingList).pipe(
+        tap(isLoading => {
+          console.log(isLoading);
+          this.isLoading = isLoading;
+          _cdr.markForCheck();
+        })
+      ),
       this._store.select((state) => state.bookState.books).pipe(
         tap((books) => this.dataSource.data = books ?? ([] as Book[]))
       ),

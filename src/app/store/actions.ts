@@ -16,4 +16,7 @@ export namespace AppActions {
         static readonly type = '[Books] Delete Books';
         constructor(public id: number){}
     }
+    export class UnSelectBook {
+        static readonly type = '[Books] UnSelect Book';
+    }
 }
