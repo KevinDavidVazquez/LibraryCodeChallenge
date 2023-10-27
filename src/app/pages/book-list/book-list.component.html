@@ -27,7 +27,12 @@
             <caption class="hidden">Books</caption>
             <ng-container *ngFor="let col of cols" [matColumnDef]="col.property">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{col.label}} </th>
-                <td mat-cell *matCellDef="let book"> {{book[col.property]}} </td>
+                <td mat-cell *matCellDef="let book"> 
+                    <span *ngIf="col.label !== 'Actions'">{{book[col.property]}}</span> 
+                    <button (click)="$event.stopPropagation();deleteBook(book.id)" *ngIf="col.label == 'Actions'" mat-icon-button color="warn">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="colsDef; sticky: true"></tr>
             <tr mat-row class="cursor-pointer" *matRowDef="let book; columns: colsDef;" (click)="openBook(book.id)"></tr>

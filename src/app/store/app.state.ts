@@ -11,6 +11,7 @@ export interface AppStateModel {
   selectedBook?: Book;
   loadingList: boolean;
   loadingSelected: boolean;
+  loadingDelete?: number;
 }
 
 @State<AppStateModel>({
@@ -81,6 +82,23 @@ export class AppState {
         throw err;
       })
     );
+  }
+
+  @Action(AppActions.DeleteBook)
+  deleteBook(ctx: StateContext<AppStateModel>, action: AppActions.DeleteBook) {
+    ctx.patchState({loadingDelete: action.id});
+    return this._bookService.delete(action.id).pipe(
+      tap(() => this._snackBar.open(`Book deleted succesfully`,'X', {
+        duration: 1500
+      })),
+      tap(() => {
+        let books  = [...ctx.getState().books!];
+        books.splice(books.findIndex(_book => _book.id == action.id), 1);
+        return ctx.patchState({
+          books,
+          loadingDelete: undefined
+        });
+      }))
   }
 
   @Action(AppActions.UnSelectBook)

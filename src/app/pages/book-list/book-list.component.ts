@@ -63,7 +63,12 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  cols = BookColumns;
+  cols = [...BookColumns, {
+    label: 'Actions',
+    property: '-',
+    show: true
+  }];
+
   searchCtrl = new FormControl('');
   dataSource: MatTableDataSource<Book> = new MatTableDataSource([] as Book[]);
   lastSearch = '';
@@ -136,6 +141,10 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
   toggleCol(colum: Column) {
     colum.show = !colum.show;
     this._cdr.markForCheck();
+  }
+
+  deleteBook(id: number){
+    this._store.dispatch(new AppActions.DeleteBook(id));
   }
 
   ngOnDestroy(): void {
