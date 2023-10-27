@@ -57,15 +57,15 @@ export class AppState {
     ctx.patchState({loadingSelected: true});
     return this._bookService.save(action.book).pipe(
       tap((book) => {
-        const state = ctx.getState();
+        let books  = [...ctx.getState().books!];
         if (action.book.id) {
-          const index = state.books?.findIndex((_book) => _book.id == book.id);
-          state.books![index!] = book;
+          const index = books?.findIndex((_book) => _book.id == book.id);
+          books![index!] = book;
         } else {
-          state.books?.push(book)
+          books?.push(book)
         }
         return ctx.patchState({
-          books: state.books,
+          books,
         });
       })
     );

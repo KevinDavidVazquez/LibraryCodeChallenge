@@ -85,10 +85,15 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
       this._route.params.pipe(
         tap(params => {
           if(params['id']) {
-            this._store.dispatch(new AppActions.GetBook(params['id']));
-            this._dialog.open(BookFormComponent, {
-              width: '600px'
-            })
+            let id = params['id'];
+            if(Number.parseInt(id) || id === 'new') {
+              if(id !== 'new') this._store.dispatch(new AppActions.GetBook(id));
+              this._dialog.open(BookFormComponent, {
+                width: '600px'
+              });
+            } else {
+              this._router.navigate(['../'])
+            } 
           }
         })
       )
@@ -98,7 +103,7 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
   }
 
   openBook(id?: number){
-    this._router.navigate([`${id}`], {relativeTo: this._route});
+    this._router.navigate([`${id??'new'}`], {relativeTo: this._route});
   }
 
   ngAfterViewInit(): void {

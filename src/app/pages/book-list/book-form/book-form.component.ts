@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
+import { AppActions } from 'src/app/store/actions';
 
 @Component({
   selector: 'app-book-form',
@@ -58,7 +59,7 @@ export class BookFormComponent implements OnDestroy {
 
   save(){
     if(this.bookForm.invalid) return;
-    console.log("Executed")
+    this._store.dispatch(new AppActions.SaveBook(this.bookForm.value));
   }
 
   close(){
