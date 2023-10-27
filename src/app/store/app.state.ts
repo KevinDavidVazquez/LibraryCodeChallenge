@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Book } from '../models/book';
-import { Column } from '../models/columns';
 import { Action, State, StateContext } from '@ngxs/store';
 import { AppActions } from './actions';
 import { BookService } from '../services/book/book.service';
-import { tap } from 'rxjs';
+import { catchError, take, tap } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface AppStateModel {
   books?: Book[];
   selectedBook?: Book;
   loadingList: boolean;
   loadingSelected: boolean;
-  error?: Error;
 }
 
 @State<AppStateModel>({
@@ -23,12 +22,15 @@ export interface AppStateModel {
 })
 @Injectable()
 export class AppState {
-  constructor(private _bookService: BookService) {}
+  constructor(private _bookService: BookService, private _snackBar: MatSnackBar) {}
 
   @Action(AppActions.GetBooks)
   getBooks(ctx: StateContext<AppStateModel>) {
-    ctx.patchState({loadingList: true});
+    ctx.patchState({loadingList: true, books: []});
     return this._bookService.getAll().pipe(
+      tap(_ => this._snackBar.open("Books loaded succesfully",'X', {
+        duration: 2500
+      })),
       tap((books) =>
         ctx.patchState({
           books,
@@ -42,6 +44,9 @@ export class AppState {
   getBook(ctx: StateContext<AppStateModel>, action: AppActions.GetBook) {
     ctx.patchState({loadingSelected: true});
     return this._bookService.get(action.id).pipe(
+      tap(book => this._snackBar.open(`Book "${book.title}" loaded succesfully`,'X', {
+        duration: 2500
+      })),
       tap((selectedBook) => {
         ctx.patchState({
           selectedBook,
@@ -56,6 +61,9 @@ export class AppState {
   saveBook(ctx: StateContext<AppStateModel>, action: AppActions.SaveBook) {
     ctx.patchState({loadingSelected: true});
     return this._bookService.save(action.book).pipe(
+      tap(book => this._snackBar.open(`Book saved succesfully`,'X', {
+        duration: 2500
+      })),
       tap((book) => {
         let books  = [...ctx.getState().books!];
         if (action.book.id) {
@@ -66,6 +74,8 @@ export class AppState {
         }
         return ctx.patchState({
           books,
+          selectedBook: book,
+          loadingSelected: false
         });
       })
     );

@@ -8,6 +8,7 @@ import { NgxsModule } from '@ngxs/store';
 import { importProvidersFrom } from '@angular/core';
 import { AppState } from './app/store/app.state';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 bootstrapApplication(AppComponent, {
@@ -18,6 +19,7 @@ bootstrapApplication(AppComponent, {
             developmentMode: true
         }),
         MatDialogModule,
+        MatSnackBarModule,
     ),
     BookService, 
     provideRouter(ROUTES)],

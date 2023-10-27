@@ -19,7 +19,6 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
-  Observable,
   Subscription,
   combineLatest,
   debounceTime,
@@ -77,14 +76,10 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
   constructor(private _store: Store, private _cdr: ChangeDetectorRef, private _dialog: MatDialog, private _route: ActivatedRoute, private _router: Router) {
     this._subscription = combineLatest([
       this._store.select(state => state.bookState.loadingList).pipe(
-        tap(isLoading => {
-          console.log(isLoading);
-          this.isLoading = isLoading;
-          _cdr.markForCheck();
-        })
+        tap(isLoading => this.isLoading = isLoading)
       ),
       this._store.select((state) => state.bookState.books).pipe(
-        tap((books) => this.dataSource.data = books ?? ([] as Book[]))
+        tap(books => this.dataSource.data = books ?? ([] as Book[]))
       ),
       this.searchCtrl.valueChanges.pipe(
         debounceTime(500),
@@ -109,8 +104,7 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
         })
       )
     ]).subscribe(_ => this._cdr.markForCheck());
-
-    this._store.dispatch(new AppActions.GetBooks());
+    this._store.dispatch(new AppActions.GetBooks())
   }
 
   openBook(id?: number){
