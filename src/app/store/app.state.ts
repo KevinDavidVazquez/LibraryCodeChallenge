@@ -28,9 +28,6 @@ export class AppState {
   getBooks(ctx: StateContext<AppStateModel>) {
     ctx.patchState({loadingList: true, books: []});
     return this._bookService.getAll().pipe(
-      tap(_ => this._snackBar.open("Books loaded succesfully",'X', {
-        duration: 2500
-      })),
       tap((books) =>
         ctx.patchState({
           books,
@@ -45,7 +42,7 @@ export class AppState {
     ctx.patchState({loadingSelected: true});
     return this._bookService.get(action.id).pipe(
       tap(book => this._snackBar.open(`Book "${book.title}" loaded succesfully`,'X', {
-        duration: 2500
+        duration: 1500
       })),
       tap((selectedBook) => {
         ctx.patchState({
@@ -62,7 +59,7 @@ export class AppState {
     ctx.patchState({loadingSelected: true});
     return this._bookService.save(action.book).pipe(
       tap(book => this._snackBar.open(`Book saved succesfully`,'X', {
-        duration: 2500
+        duration: 1500
       })),
       tap((book) => {
         let books  = [...ctx.getState().books!];

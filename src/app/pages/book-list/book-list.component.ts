@@ -20,8 +20,10 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   Subscription,
+  catchError,
   combineLatest,
   debounceTime,
+  take,
   tap,
 } from 'rxjs';
 import { FormControl } from '@angular/forms';
@@ -32,6 +34,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { BookFormComponent } from './book-form/book-form.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-book-list',
@@ -73,7 +76,7 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
     }, []);
   }
 
-  constructor(private _store: Store, private _cdr: ChangeDetectorRef, private _dialog: MatDialog, private _route: ActivatedRoute, private _router: Router) {
+  constructor(private _store: Store, private _cdr: ChangeDetectorRef, private _dialog: MatDialog, private _route: ActivatedRoute, private _router: Router, private _snackBar: MatSnackBar) {
     this._subscription = combineLatest([
       this._store.select(state => state.bookState.loadingList).pipe(
         tap(isLoading => this.isLoading = isLoading)
@@ -93,9 +96,9 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
           if(params['id']) {
             let id = params['id'];
             if(Number.parseInt(id) || id === 'new') {
-              if(id !== 'new') this._store.dispatch(new AppActions.GetBook(id));
               this._dialog.open(BookFormComponent, {
-                width: '600px'
+                width: '600px',
+                data: id
               });
             } else {
               this._router.navigate(['../'])
@@ -104,7 +107,21 @@ export class BookListComponent implements AfterViewInit, OnDestroy {
         })
       )
     ]).subscribe(_ => this._cdr.markForCheck());
-    this._store.dispatch(new AppActions.GetBooks())
+    this._getBooks();
+  }
+
+  private _getBooks(){
+    this._store.dispatch(new AppActions.GetBooks()).pipe(
+      take(1),
+      catchError(err => {
+        this._snackBar.open(err, 'retry', {
+          duration: 5000
+        }).onAction().pipe(
+          take(1)
+        ).subscribe(_ => this._getBooks());
+        throw err;
+      })
+    ).subscribe();
   }
 
   openBook(id?: number){

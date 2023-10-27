@@ -1,7 +1,6 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { Book } from 'src/app/models/book';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { BookForm } from './book.form';
@@ -11,11 +10,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { Select, Store } from '@ngxs/store';
-import { Observable, Subscription } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { Subscription, catchError, take } from 'rxjs';
 import { AppActions } from 'src/app/store/actions';
-import { AppStateModel } from 'src/app/store/app.state';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-book-form',
@@ -58,11 +57,26 @@ export class BookFormComponent implements OnDestroy {
     'Sci-Fi'
   ]
 
-  constructor(private _router: Router, private _store: Store) {
+  constructor(@Inject(MAT_DIALOG_DATA) public id: number, private _router: Router, private _store: Store, private _snackBar: MatSnackBar) {
     this._subscription = this._store.select(state => state.bookState.selectedBook).subscribe(book => this.bookForm.patchValue(book));
     this._subscription.add(
       _store.select(state => state.bookState.loadingSelected).subscribe(isLoading => this.isLoading = isLoading)
     );
+    this._getBook(id)
+  }
+
+  private _getBook(id: number){
+    this._store.dispatch(new AppActions.GetBook(id)).pipe(
+      take(1),
+      catchError(err => {
+        this._snackBar.open(err, 'retry', {
+          duration: 5000
+        }).onAction().pipe(
+          take(1)
+        ).subscribe(_ => this._getBook(id));
+        throw err;
+      })
+    ).subscribe();
   }
 
   save(){

@@ -19,8 +19,10 @@ export class BookService {
   
   get(id: number): Observable<Book>{
     const book = this._books.find(book => book.id == id);
-    if(!book) throw new Error(`No book found with id: ${id}`);
-    return of({...book}).pipe(delay(1000));
+    if(book){
+      return of({...book!}).pipe(delay(1000));
+    }
+    throw('Book Id was not found ')
   }
 
   save(book: Book): Observable<Book>{
