@@ -71,7 +71,6 @@ export class AppState {
         }
         return ctx.patchState({
           books,
-          selectedBook: book,
           loadingSelected: false
         });
       }),
@@ -82,5 +81,12 @@ export class AppState {
         throw err;
       })
     );
+  }
+
+  @Action(AppActions.UnSelectBook)
+  unSelectBook(ctx: StateContext<AppStateModel>) {
+    ctx.patchState({
+      selectedBook: undefined
+    });
   }
 }

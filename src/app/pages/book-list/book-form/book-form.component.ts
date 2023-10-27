@@ -59,14 +59,14 @@ export class BookFormComponent implements OnDestroy {
 
   constructor(
     private _dialogRef: MatDialogRef<BookFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public id: number,
+    @Inject(MAT_DIALOG_DATA) public id: number | 'new',
     private _router: Router, private _store: Store, private _snackBar: MatSnackBar
   ) {
     this._subscription = this._store.select(state => state.bookState.selectedBook).subscribe(book => this.bookForm.patchValue(book));
     this._subscription.add(
       _store.select(state => state.bookState.loadingSelected).subscribe(isLoading => this.isLoading = isLoading)
     );
-    this._getBook(id)
+    if(id != 'new') this._getBook(id)
   }
 
   private _getBook(id: number){
@@ -97,6 +97,7 @@ export class BookFormComponent implements OnDestroy {
   }
 
   close(){
+    this._store.dispatch(new AppActions.UnSelectBook());
     this._dialogRef.close();
     this._router.navigate(['../'])
   }
