@@ -42,7 +42,7 @@ export class BookService {
   }
 
   delete(id: number){
-    if(Math.random() < 0.95) return of(id).pipe(delay(1000), map(_ => {
+    if(Math.random() < 0.15) return of(id).pipe(delay(1000), map(_ => {
       throw('There was an error deleting the book.')
     }));
     this._books.splice(this._books.findIndex(book => book.id == id), 1);
